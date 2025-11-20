@@ -10,7 +10,7 @@
 </script>
 
 {#snippet blogPost(post: SanityDocument)}
-	{@const postUrl = resolve('/(main)/blog/[slug]', { slug: post.slug.current })}
+	{@const postUrl = resolve('/blog/[slug]', { slug: post.slug.current })}
 	<div class="block space-y-4 overflow-hidden card p-4">
 		<header>
 			<h3 class="h3">{post.title}</h3>
