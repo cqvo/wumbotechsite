@@ -2,6 +2,7 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { GoogleTagManager, SpeedInsights } from '$lib/analytics';
+
 	let { children } = $props();
 </script>
 
@@ -11,4 +12,5 @@
 
 <GoogleTagManager />
 <SpeedInsights />
+
 {@render children()}
