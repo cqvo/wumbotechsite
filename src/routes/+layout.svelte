@@ -1,7 +1,7 @@
 <script lang="ts">
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
-	import { GoogleTagManager, SpeedInsights } from '$lib/analytics';
+	import { AnalyticsProvider } from '$lib/analytics';
 
 	let { children } = $props();
 </script>
@@ -10,7 +10,6 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<GoogleTagManager />
-<SpeedInsights />
+<AnalyticsProvider />
 
 {@render children()}
