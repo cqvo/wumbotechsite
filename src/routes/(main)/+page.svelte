@@ -1,4 +1,4 @@
-<header class="flex flex-col justify-center gap-4 p-4">
+<div class="flex h-screen flex-col content-center justify-center gap-4 p-4">
 	<h2 class="content-center text-center h2">
 		The worldwide leader in <span
 			class="bg-gradient-to-r from-primary-400 to-secondary-600 box-decoration-clone bg-clip-text text-transparent dark:from-secondary-500 dark:to-tertiary-500"
@@ -25,11 +25,4 @@
 			</div>
 		</div>
 	</section>
-</header>
-
-<style>
-	.preset-gradient-one {
-		background-image: linear-gradient(45deg, var(--color-primary-500), var(--color-tertiary-500));
-		color: var(--color-primary-contrast-500);
-	}
-</style>
+</div>
