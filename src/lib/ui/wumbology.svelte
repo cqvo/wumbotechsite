@@ -26,10 +26,3 @@
 		</div>
 	</section>
 </header>
-
-<style>
-	.preset-gradient-one {
-		background-image: linear-gradient(45deg, var(--color-primary-500), var(--color-tertiary-500));
-		color: var(--color-primary-contrast-500);
-	}
-</style>
