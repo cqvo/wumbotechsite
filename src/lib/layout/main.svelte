@@ -8,10 +8,11 @@
 		<NavRail />
 	</aside>
 
-	<aside class="hidden xl:block">
+	<aside class="hidden w-1/3 xl:block">
 		<NavSidebar />
 	</aside>
-	<main class="p-4 sm:px-8 md:px-16 lg:px-32 2xl:px-64">
+
+	<main class="mx-auto p-4 md:w-2/3">
 		{@render children()}
 	</main>
 

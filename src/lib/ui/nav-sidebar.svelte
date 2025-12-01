@@ -1,77 +1,28 @@
 <script lang="ts">
-	import {
-		BedDoubleIcon,
-		BikeIcon,
-		BookIcon,
-		BubblesIcon,
-		HouseIcon,
-		MountainIcon,
-		PopcornIcon,
-		SailboatIcon,
-		SettingsIcon,
-		SkullIcon,
-		TreePalmIcon,
-		TvIcon
-	} from '@lucide/svelte';
+	import { CircleUserRoundIcon, HouseIcon, NewspaperIcon } from '@lucide/svelte';
 	import { Navigation } from '@skeletonlabs/skeleton-svelte';
 
-	const linksSidebar = {
-		entertainment: [
-			{ label: 'Books', href: '#', icon: BookIcon },
-			{ label: 'Movies', href: '#', icon: PopcornIcon },
-			{ label: 'Television', href: '#', icon: TvIcon }
-		],
-		recreation: [
-			{ label: 'Biking', href: '#', icon: BikeIcon },
-			{ label: 'Sailing', href: '#', icon: SailboatIcon },
-			{ label: 'Hiking', href: '#', icon: MountainIcon }
-		],
-		relaxation: [
-			{ label: 'Lounge', href: '#', icon: TreePalmIcon },
-			{ label: 'Spa', href: '#', icon: BubblesIcon },
-			{ label: 'Sleep', href: '#', icon: BedDoubleIcon }
-		]
-	};
+	const linksSidebar = [
+		{ label: 'Home', href: '/', icon: HouseIcon },
+		{ label: 'About', href: '/about', icon: CircleUserRoundIcon },
+		{ label: 'Blog', href: '/blog', icon: NewspaperIcon }
+	];
 
 	let anchorSidebar = 'btn hover:preset-tonal justify-start px-2 w-full';
 </script>
 
 <div class="grid h-screen w-full grid-cols-[auto_1fr] items-stretch border border-surface-200-800">
 	<Navigation layout="sidebar" class="grid grid-rows-[auto_1fr_auto] gap-4">
-		<Navigation.Header>
-			<a href="https://www.skeleton.dev" class="btn-icon btn-icon-lg preset-filled-primary-500">
-				<SkullIcon class="size-6" />
-			</a>
-		</Navigation.Header>
 		<Navigation.Content>
-			<Navigation.Group>
-				<Navigation.Menu>
-					<a href="/" class={anchorSidebar}>
-						<HouseIcon class="size-4" />
-						<span>Home</span>
+			<Navigation.Menu>
+				{#each linksSidebar as link (link)}
+					{@const Icon = link.icon}
+					<a href={link.href} class={anchorSidebar} title={link.label} aria-label={link.label}>
+						<Icon class="size-4" />
+						<span>{link.label}</span>
 					</a>
-				</Navigation.Menu>
-			</Navigation.Group>
-			{#each Object.entries(linksSidebar) as [category, links]}
-				<Navigation.Group>
-					<Navigation.Label class="pl-2 capitalize">{category}</Navigation.Label>
-					<Navigation.Menu>
-						{#each links as link (link)}
-							{@const Icon = link.icon}
-							<a href={link.href} class={anchorSidebar} title={link.label} aria-label={link.label}>
-								<Icon class="size-4" />
-								<span>{link.label}</span>
-							</a>
-						{/each}
-					</Navigation.Menu>
-				</Navigation.Group>
-			{/each}
+				{/each}
+			</Navigation.Menu>
 		</Navigation.Content>
-		<Navigation.Footer>
-			<a href="/" class={anchorSidebar} title="Settings" aria-label="Settings">
-				<SettingsIcon class="size-4" />
-				<span>Settings</span>
-			</a>
-		</Navigation.Footer>
 	</Navigation>
 </div>
