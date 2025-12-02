@@ -8,14 +8,15 @@
 		<NavRail />
 	</aside>
 
-	<aside class="hidden xl:block">
+	<aside class="hidden w-1/3 xl:block">
 		<NavSidebar />
 	</aside>
-	<main class="p-4 sm:px-8 md:px-16 lg:px-32 2xl:px-64">
+
+	<main class="mx-auto min-h-screen p-4 md:w-2/3">
 		{@render children()}
 	</main>
 
-	<footer class="sticky bottom-0 block sm:hidden">
+	<footer class="sticky bottom-0 z-10 block max-h-fit sm:hidden">
 		<NavMobileBar />
 	</footer>
 </div>
