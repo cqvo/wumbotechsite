@@ -15,15 +15,30 @@
 </MainLayout>
 
 {#snippet PositionBlock(position)}
-	<h6 class="h6">{position.company}</h6>
-	<span class="text-surface-500">
-		{position.start} - {position.end} - {position.tenure}
-	</span>
-	{#each position.roles as role (role)}
-		{@render RoleBlock(role)}
-	{/each}
+	<div class="py-2">
+		<h3 class="h6">{position.company}</h3>
+		<span class="text-surface-500">
+			{position.start} - {position.end} - {position.tenure}
+		</span>
+		{#each position.roles as role (role)}
+			{@render RoleBlock(role)}
+		{/each}
+	</div>
 {/snippet}
 
 {#snippet RoleBlock(role)}
-	<h6 class="h6">{role.title}</h6>
+	<div class="my-2">
+		<h6 class="font-bold">{role.title}</h6>
+		<small class="text-surface-500">{role.start} - {role.end}</small>
+		{#if role.description}
+			<p>{role.description}</p>
+		{/if}
+		{#if role.list}
+			<ul class="list-inside list-disc">
+				{#each role.list as item (item)}
+					<li>{item}</li>
+				{/each}
+			</ul>
+		{/if}
+	</div>
 {/snippet}

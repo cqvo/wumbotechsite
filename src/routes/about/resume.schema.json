@@ -21,10 +21,6 @@
 							"type": "string",
 							"description": "Job title"
 						},
-						"description": {
-							"type": ["string", "null"],
-							"description": "Role description"
-						},
 						"start": {
 							"type": "string",
 							"description": "Start date (e.g., 'August 2025')"
@@ -32,6 +28,14 @@
 						"end": {
 							"type": "string",
 							"description": "End date (e.g., 'Present', 'July 2025')"
+						},
+						"description": {
+							"type": ["string", "null"],
+							"description": "Role description"
+						},
+						"list": {
+							"type": "array",
+							"description": "List of responsibilities and achievements"
 						}
 					}
 				}

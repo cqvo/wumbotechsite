@@ -9,7 +9,8 @@ interface Organization {
 
 interface Role {
 	title: string;
-	description: string;
+	description?: string;
+	list?: string[];
 	start: string;
 	end: string;
 }

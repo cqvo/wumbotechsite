@@ -2,34 +2,41 @@
 - company: GoFundMe
   roles:
     - title: Senior Web Instrumentation Engineer
-      description: Pouring glue on martech products
-      start: August 2025
+      start: Aug 2025
       end: Present
+      description: Pouring glue on martech products
 - company: Velir
   roles:
     - title: Associate Director, Digital Analytics
-      description: did stuff
-      start: October 2022
-      end: July 2025
+      start: Oct 2022
+      end: Jul 2025
+      list:
+        - Strategically expanded team capabilities from web/marketing analytics to include product analytics and Customer Data Platforms (CDP), positioning the company for higher-value engagements
+        - Scaled the Behavioral Analytics team from one to five direct reports plus subcontractors, developing training pipelines and mentorship programs to ensure continuous development
+        - Established strategic partnerships with the other teams, enabling cross-selling opportunities and integrated service offerings that increased overall contract values
+        - Led analytics workshops with client executives to define business goals and translate them into measurable KPIs and implementation roadmaps
+        - Designed scalable event taxonomies and implemented Google Analytics 4 using advanced Google Tag Manager techniques (custom JavaScript, tag templates)
+        - Provided technical consultation to engineering teams on analytics SDK implementation (Segment, mParticle) within modern frameworks (React, Next.js)
+        - Resolved complex analytics issues by leveraging expertise in HTTP requests, JavaScript Web API, and data modeling concepts
+        - Developed data activation strategies that enabled clients to implement effective user segmentation, journey mapping, and personalization initiatives
 - company: Publicis Sapient AI Labs
   roles:
     - title: Senior Data Analyst
-      description:
-      start: April 2022
-      end: October 2022
+      start: Apr 2022
+      end: Oct 2022
     - title: Data Analyst
       description:
-      start: July 2020
-      end: April 2022
+      start: Jul 2020
+      end: Apr 2022
 - company: BlueGranite
   roles:
     - title: Solution Consultant
       description:
       start: May 2019
-      end: February 2020
+      end: Feb 2020
 - company: Monster.com
   roles:
     - title: Web Analyst
       description:
-      start: June 2016
-      end: February 2019
+      start: Jun 2016
+      end: Feb 2019
