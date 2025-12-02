@@ -1,13 +1,11 @@
 <script lang="ts">
-	import Wumbology from '$lib/ui/wumbology.svelte';
 	import BlogFeed from '$lib/ui/blogfeed.svelte';
 	import { MainLayout } from '$lib/layout';
+	import { getPosts } from '$lib/sanity';
 
-	let { data } = $props();
+	const posts = getPosts();
 </script>
 
 <MainLayout>
-	<Wumbology />
-
-	<BlogFeed posts={data.posts} />
+	<BlogFeed posts={posts.current} />
 </MainLayout>
