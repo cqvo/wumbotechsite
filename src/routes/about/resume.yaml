@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=./resume.schema.json
+- company: GoFundMe
+  roles:
+    - title: Senior Web Instrumentation Engineer
+      description: Pouring glue on martech products
+      start: August 2025
+      end: Present
+- company: Velir
+  roles:
+    - title: Associate Director, Digital Analytics
+      description: did stuff
+      start: October 2022
+      end: July 2025
+- company: Publicis Sapient AI Labs
+  roles:
+    - title: Senior Data Analyst
+      description:
+      start: April 2022
+      end: October 2022
+    - title: Data Analyst
+      description:
+      start: July 2020
+      end: April 2022
+- company: BlueGranite
+  roles:
+    - title: Solution Consultant
+      description:
+      start: May 2019
+      end: February 2020
+- company: Monster.com
+  roles:
+    - title: Web Analyst
+      description:
+      start: June 2016
+      end: February 2019
