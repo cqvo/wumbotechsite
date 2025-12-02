@@ -12,11 +12,11 @@
 		<NavSidebar />
 	</aside>
 
-	<main class="mx-auto p-4 md:w-2/3">
+	<main class="mx-auto min-h-screen p-4 md:w-2/3">
 		{@render children()}
 	</main>
 
-	<footer class="sticky bottom-0 block sm:hidden">
+	<footer class="sticky bottom-0 z-10 block max-h-fit sm:hidden">
 		<NavMobileBar />
 	</footer>
 </div>
