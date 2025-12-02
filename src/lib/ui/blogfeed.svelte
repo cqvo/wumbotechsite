@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { PortableText } from '@portabletext/svelte';
 	import { ArrowRightIcon } from '@lucide/svelte';
 	import type { SanityDocument } from '@sanity/client';
 	import { getPosts } from '$lib/sanity';
@@ -24,7 +25,7 @@
 			{new Date(post.publishedAt).toDateString()}
 		</header>
 		<article class="space-y-4">
-			{post.excerpt}
+			<PortableText value={post.excerpt} />
 		</article>
 		<footer>
 			<a href={postUrl} class="anchor">Continue reading</a>

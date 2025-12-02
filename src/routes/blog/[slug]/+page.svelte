@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { MainLayout } from '$lib/layout';
-	import { getPost } from '$lib/sanity';
+	import BlogPost from '$lib/ui/blogpost.svelte';
 
 	let { params } = $props();
-
-	const post = $derived(getPost(params.slug));
 </script>
 
 <MainLayout>
-	{post.current}
+	<BlogPost slug={params.slug} />
 </MainLayout>
