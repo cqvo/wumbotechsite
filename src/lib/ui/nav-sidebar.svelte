@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CircleUserRoundIcon, HouseIcon, NewspaperIcon } from '@lucide/svelte';
-	import { Navigation } from '@skeletonlabs/skeleton-svelte';
+	import { Avatar, Navigation } from '@skeletonlabs/skeleton-svelte';
 
 	const linksSidebar = [
 		{ label: 'Home', href: '/', icon: HouseIcon },
@@ -13,6 +13,9 @@
 
 <div class="grid h-screen w-full grid-cols-[auto_1fr] items-stretch border border-surface-200-800">
 	<Navigation layout="sidebar" class="grid grid-rows-[auto_1fr_auto] gap-4">
+		<Navigation.Header class="grid grid-cols-1 space-y-4 p-4">
+			{@render Me()}
+		</Navigation.Header>
 		<Navigation.Content>
 			<Navigation.Menu>
 				{#each linksSidebar as link (link)}
@@ -26,3 +29,14 @@
 		</Navigation.Content>
 	</Navigation>
 </div>
+
+{#snippet Me()}
+	<Avatar class="mx-auto size-36">
+		<Avatar.Image src="https://avatars.githubusercontent.com/u/50410061?v=4" />
+		<Avatar.Fallback>CV</Avatar.Fallback>
+	</Avatar>
+	<div class="mx-auto">
+		<h3 class="h3 font-mono">Chris Vo</h3>
+		<h6 class="text-surface-500 italic">Chief Wumbologist</h6>
+	</div>
+{/snippet}
