@@ -1,17 +1,26 @@
 <script lang="ts">
 	import { MainLayout } from '$lib/layout';
 	import { getResume } from './data.remote';
+	import Wumbology from '$lib/ui/wumbology.svelte';
 </script>
 
 <MainLayout>
-	{#await getResume() then positions}
-		{#each positions as position, index (position)}
-			{@render PositionBlock(position)}
-			{#if index < positions.length - 1}
-				<hr class="hr border-surface-100-900" />
-			{/if}
-		{/each}
-	{/await}
+	<Wumbology />
+	<div>
+		<h3 class="h3">What is "wumbo"?</h3>
+		Nobody knows but it's provocative!
+	</div>
+	<div>
+		<h3 class="h3">Where have you worked?</h3>
+		{#await getResume() then positions}
+			{#each positions as position, index (position)}
+				{@render PositionBlock(position)}
+				{#if index < positions.length - 1}
+					<hr class="hr border-surface-100-900" />
+				{/if}
+			{/each}
+		{/await}
+	</div>
 </MainLayout>
 
 {#snippet PositionBlock(position)}

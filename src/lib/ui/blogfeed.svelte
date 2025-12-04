@@ -22,13 +22,13 @@
 	<div class="block space-y-4 overflow-hidden card">
 		<header>
 			<h3 class="h3">{post.title}</h3>
-			{new Date(post.publishedAt).toDateString()}
+			<span class="opacity-60">{new Date(post.publishedAt).toDateString()}</span>
 		</header>
 		<article class="space-y-4">
 			<PortableText value={post.excerpt} />
 		</article>
 		<footer>
-			<a href={postUrl} class="anchor">Continue reading</a>
+			<a href={postUrl} class="anchor italic">Continue reading</a>
 		</footer>
 	</div>
 {/snippet}

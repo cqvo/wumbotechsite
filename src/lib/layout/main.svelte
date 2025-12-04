@@ -12,7 +12,7 @@
 		<NavSidebar />
 	</aside>
 
-	<main class="mx-auto min-h-screen p-4 md:w-2/3">
+	<main class="mx-auto min-h-screen max-w-2xl space-y-4 p-4">
 		{@render children()}
 	</main>
 
