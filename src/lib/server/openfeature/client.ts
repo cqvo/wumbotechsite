@@ -1,19 +1,23 @@
-import { OpenFeature, InMemoryProvider } from '@openfeature/server-sdk';
+import { OpenFeature } from '@openfeature/server-sdk';
+import { flagsClient } from '@vercel/flags-core';
+import { VercelProvider } from '@vercel/flags-core/openfeature';
 
-// Example flag config from the install guide — placeholder, not a real flag.
-const flagConfig = {
-	'new-message': {
-		disabled: false,
-		variants: { on: true, off: false },
-		defaultVariant: 'on'
-	}
-};
+const provider = new VercelProvider(flagsClient);
 
-const provider = new InMemoryProvider(flagConfig);
-
-/** Register the provider and await readiness. Call once at server startup. */
+/**
+ * Register the Vercel Flags provider and await readiness. Call once at server startup.
+ *
+ * Resilient by design: if flag definitions can't be loaded — e.g. no `FLAGS` env
+ * var locally, or the Flags service is briefly unreachable with no build-time
+ * bundle to fall back on — we log and continue rather than crash the server.
+ * Evaluations then fall back to the defaults passed at each call site.
+ */
 export async function initOpenFeature() {
-	await OpenFeature.setProviderAndWait(provider);
+	try {
+		await OpenFeature.setProviderAndWait(provider);
+	} catch (error) {
+		console.error('[openfeature] Failed to initialize Vercel Flags provider:', error);
+	}
 }
 
 /** Get a client for evaluating flags from server code. */
