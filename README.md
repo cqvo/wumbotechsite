@@ -7,6 +7,7 @@ Source for [wumbo.tech](https://wumbo.tech) — a personal site built with Svelt
 - **[SvelteKit](https://svelte.dev/docs/kit)** (Svelte 5 runes) on the **[Vercel](https://vercel.com)** adapter
 - **[Tailwind CSS v4](https://tailwindcss.com)** + **[Skeleton UI v4](https://www.skeleton.dev)** — configured in CSS (`src/routes/layout.css`)
 - **TypeScript** (strict, with `checkJs`)
+- **[OpenFeature](https://openfeature.dev)** + **[Vercel Flags](https://vercel.com/docs/flags/vercel-flags)** for server-side feature flags
 - **[Vitest](https://vitest.dev)** + **[Playwright](https://playwright.dev)** for tests
 - **[pnpm](https://pnpm.io)** package manager
 
@@ -62,6 +63,30 @@ pnpm test:unit -- --project server src/demo.spec.ts
 
 See **[`CLAUDE.md`](./CLAUDE.md)** for the full conventions and architecture notes.
 
+## Feature flags
+
+Server-side flags go through the vendor-neutral [OpenFeature](https://openfeature.dev) API, backed by
+[Vercel Flags](https://vercel.com/docs/flags/vercel-flags). The provider is wired up in
+`$lib/server/openfeature` (server-only) and registered once at startup via the `init` hook in
+`src/hooks.server.ts`. Initialization is fail-safe: if flag definitions can't be loaded, it logs and
+continues, and evaluations fall back to their call-site defaults.
+
+Evaluate a flag from any server code (`+page.server.ts`, `+server.ts`, hooks, …):
+
+```ts
+import { getFeatureClient } from '$lib/server/openfeature';
+
+const enabled = await getFeatureClient().getBooleanValue('marketing-banner', false);
+```
+
+To create and manage flags (one-time setup, requires the [Vercel CLI](https://vercel.com/docs/cli)):
+
+1. Create a flag in the Vercel Dashboard → **Flags**. This provisions a `FLAGS` env var on the project.
+2. Pull it locally: `vercel link` (if needed), then `vercel env pull` → writes `FLAGS` into `.env.local`.
+
+Without `FLAGS` (e.g. a fresh clone), evaluations simply return their defaults. On Vercel, flag
+definitions are bundled at build time as a runtime fallback.
+
 ## Deployment
 
 The site deploys to **Vercel** (`@sveltejs/adapter-vercel`) through Vercel's native Git
@@ -91,3 +116,5 @@ Analytics and SEO key off Vercel's standard **Production** / **Preview** environ
 - Env var `PUBLIC_GTM_ID = GTM-5K34KN7M` set on the **Production** environment only — leave it
   unset for Preview/Development so preview URLs stay GTM-free. (`PUBLIC_VERCEL_TARGET_ENV` is
   injected automatically by Vercel.)
+- Env var `FLAGS` — provisioned automatically by Vercel Flags when the first flag is created; no
+  manual setup. Pull it locally with `vercel env pull` (see [Feature flags](#feature-flags)).
