@@ -36,14 +36,25 @@ resource "github_branch_protection" "main" {
   pattern       = "main"
 
   required_status_checks {
-    strict   = true
-    contexts = ["verify"] # job name in .github/workflows/ci.yml
+    strict = true
+    # Job names in .github/workflows/ci.yml. tfstate-guard requires committed
+    # state whenever terraform/*.tf changes.
+    contexts = ["verify", "tfstate-guard"]
   }
 
   enforce_admins          = false
   required_linear_history = false
   allows_force_pushes     = false
   allows_deletions        = false
+}
+
+# Escape hatch for the tfstate-guard CI check: apply this label to a PR that
+# changes terraform/*.tf but intentionally produces no state diff.
+resource "github_issue_label" "no_state_change" {
+  repository  = github_repository.site.name
+  name        = "no-state-change"
+  color       = "ededed"
+  description = "PR changes terraform/*.tf but intentionally no state; skips tfstate-guard"
 }
 
 # Forward-looking: identifiers a future CI deploy/plan workflow would consume.
