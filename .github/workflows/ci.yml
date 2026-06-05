@@ -2,6 +2,9 @@ name: CI
 
 on:
   pull_request:
+    # Include labeled/unlabeled so applying the 'no-state-change' label re-runs
+    # the tfstate-guard check (the defaults are opened/synchronize/reopened).
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 jobs:
   verify:
