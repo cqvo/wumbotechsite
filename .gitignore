@@ -12,6 +12,9 @@ node_modules
 .DS_Store
 Thumbs.db
 
+# Claude Code (machine-local)
+.claude/settings.local.json
+
 # Env
 .env
 .env.*
