@@ -27,10 +27,13 @@ vite.config.ts.timestamp-*
 
 # OpenTofu / Terraform
 terraform/.terraform/
-terraform/*.tfstate
-terraform/*.tfstate.*
 terraform/*.tfplan
 terraform/terraform.tfvars
+terraform/*.auto.tfvars
 crash.log
 crash.*.log
+# The state file (terraform/terraform.tfstate) IS committed on purpose — it is
+# encrypted at rest (see terraform/encryption.tf). NEVER disable that encryption.
+# Backups and lock-info may contain plaintext, so keep them out:
+terraform/*.tfstate.*
 # Keep .terraform.lock.hcl tracked.
