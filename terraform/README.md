@@ -34,7 +34,10 @@ each apply**. If you forget, the next `tofu plan` just shows the drift.
 1. **Install OpenTofu:** `brew install opentofu`
 2. **Create credentials:**
    - Vercel API token → https://vercel.com/account/tokens
-   - GitHub PAT with `repo` scope → https://github.com/settings/tokens
+   - GitHub token → https://github.com/settings/tokens. Use a **fine-grained** PAT
+     scoped to **only** `cqvo/wumbotechsite-svelte`, with these repository permissions
+     (see [GitHub token permissions](#github-token-permissions)). A classic PAT with
+     the `repo` scope also works if you prefer.
    - A strong state passphrase (≥ 16 chars) → store in **1Password**
 3. **Provide variables** — either copy `terraform.auto.tfvars.example` to
    `terraform.auto.tfvars` (gitignored) and fill it in, **or** export `TF_VAR_*`,
@@ -46,6 +49,21 @@ each apply**. If you forget, the next `tofu plan` just shows the drift.
    export TF_VAR_gtm_id='GTM-XXXXXXX'
    ```
    `TF_VAR_state_passphrase` is required for **every** `tofu` invocation.
+
+### GitHub token permissions
+
+Fine-grained PAT scoped to **only** `cqvo/wumbotechsite-svelte` (repository permissions):
+
+| Permission     | Access         | Used by                                                                 |
+| -------------- | -------------- | ----------------------------------------------------------------------- |
+| Administration | Read and write | `github_repository` settings + `github_branch_protection`               |
+| Metadata       | Read-only      | mandatory baseline (auto-selected)                                      |
+| Issues         | Read and write | `github_issue_label.no_state_change` (labels)                           |
+| Variables      | Read and write | `github_actions_variable.*`                                             |
+| Secrets        | Read and write | `github_actions_secret.vercel_token` — only if `ci_vercel_token` is set |
+
+No organization/account permissions are needed (user-owned, repo-scoped). Contents,
+Workflows, and Webhooks are not required.
 
 ## First run (import) + ongoing
 

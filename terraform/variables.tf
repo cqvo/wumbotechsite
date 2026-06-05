@@ -20,7 +20,7 @@ variable "vercel_team_id" {
 }
 
 variable "github_token" {
-  description = "GitHub PAT with 'repo' scope. Provide via TF_VAR_github_token."
+  description = "GitHub token. Fine-grained PAT scoped to cqvo/wumbotechsite-svelte with Administration + Issues + Variables + Secrets (read/write) and Metadata (read); or a classic PAT with 'repo' scope. See README. Provide via TF_VAR_github_token."
   type        = string
   sensitive   = true
 }
