@@ -7,3 +7,8 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Agent tooling (third-party / generated — not project source)
+.agents/
+.claude/
+skills-lock.json
