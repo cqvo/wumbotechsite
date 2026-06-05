@@ -19,15 +19,15 @@ each apply**. If you forget, the next `tofu plan` just shows the drift.
 
 ## What's managed
 
-| Resource | Action | Notes |
-|---|---|---|
-| `vercel_project.site` | imported | framework, Node 22.x, git link |
-| `vercel_project_environment_variable.public_gtm_id` | import or create | `PUBLIC_GTM_ID` (see below) |
-| `vercel_project_domain.{apex,www}` | imported | `wumbo.tech`, `www.wumbo.tech` |
-| `github_repository.site` | imported | mirrors current settings |
-| `github_branch_protection.main` | **created** | requires the `verify` CI check |
-| `github_actions_variable.*` | created | `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` |
-| `github_actions_secret.vercel_token` | created (optional) | only if `ci_vercel_token` set |
+| Resource                                            | Action             | Notes                                |
+| --------------------------------------------------- | ------------------ | ------------------------------------ |
+| `vercel_project.site`                               | imported           | framework, Node 22.x, git link       |
+| `vercel_project_environment_variable.public_gtm_id` | import or create   | `PUBLIC_GTM_ID` (see below)          |
+| `vercel_project_domain.{apex,www}`                  | imported           | `wumbo.tech`, `www.wumbo.tech`       |
+| `github_repository.site`                            | imported           | mirrors current settings             |
+| `github_branch_protection.main`                     | **created**        | requires the `verify` CI check       |
+| `github_actions_variable.*`                         | created            | `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` |
+| `github_actions_secret.vercel_token`                | created (optional) | only if `ci_vercel_token` set        |
 
 ## Setup
 
@@ -58,7 +58,7 @@ git add terraform/terraform.tfstate && git commit -m "tofu: import infra into st
 ```
 
 The `tofu plan` step is the safety gate: it should show the existing project/repo being
-*imported* and reconciled to zero changes. The only *new* resources are branch protection
+_imported_ and reconciled to zero changes. The only _new_ resources are branch protection
 and the Actions variables/secret. **If you see unexpected modify/replace/destroy on the
 imported resources, stop and tune the config — do not apply.**
 
