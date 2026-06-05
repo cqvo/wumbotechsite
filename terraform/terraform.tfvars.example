@@ -1,0 +1,15 @@
+# Copy to terraform.tfvars (gitignored) OR export each as TF_VAR_<name>.
+# Secrets should be exported as env vars rather than written to disk where possible.
+
+# Required, non-secret
+gtm_id = "GTM-XXXXXXX"
+
+# Secrets — prefer exporting these as environment variables:
+#   export TF_VAR_state_passphrase='...'      # encrypts state; store durably, losing it = unrecoverable state
+#   export TF_VAR_vercel_api_token='...'      # vercel.com/account/tokens
+#   export TF_VAR_github_token='...'          # GitHub PAT with 'repo' scope
+#   export TF_VAR_ci_vercel_token='...'       # optional; only to create the CI VERCEL_TOKEN secret
+
+# Overridable defaults (already set in variables.tf to this project's values):
+# vercel_team_id = "team_hbvzY3Fd6qNjEiPHutKWYO2A"
+# github_owner   = "cqvo"
