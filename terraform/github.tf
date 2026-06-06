@@ -27,34 +27,50 @@ resource "github_repository" "site" {
   archived    = false
 }
 
-# NEW resource — no branch protection exists today. Configured conservatively for
-# a solo maintainer: require the existing CI check to pass, but do not require PR
-# reviews and do not enforce on admins, so you can never fence yourself out of main.
-# Effect: because `verify` only runs on pull_request, merges to main go through PRs.
-resource "github_branch_protection" "main" {
-  repository_id = github_repository.site.node_id
-  pattern       = "main"
+# Mirrors the existing "Protect main" repository ruleset (imported). Admins can
+# always bypass, so the owner is never fenced out of main. Requires the `verify`
+# status check (the job in .github/workflows/ci.yml) before merging to main.
+resource "github_repository_ruleset" "main" {
+  name        = "Protect main"
+  repository  = github_repository.site.name
+  target      = "branch"
+  enforcement = "active"
 
-  required_status_checks {
-    strict = true
-    # Job names in .github/workflows/ci.yml. tfstate-guard requires committed
-    # state whenever terraform/*.tf changes.
-    contexts = ["verify", "tfstate-guard"]
+  conditions {
+    ref_name {
+      include = ["~DEFAULT_BRANCH"]
+      exclude = []
+    }
   }
 
-  enforce_admins          = false
-  required_linear_history = false
-  allows_force_pushes     = false
-  allows_deletions        = false
-}
+  bypass_actors {
+    actor_id    = 5 # Admin repository role
+    actor_type  = "RepositoryRole"
+    bypass_mode = "always"
+  }
 
-# Escape hatch for the tfstate-guard CI check: apply this label to a PR that
-# changes terraform/*.tf but intentionally produces no state diff.
-resource "github_issue_label" "no_state_change" {
-  repository  = github_repository.site.name
-  name        = "no-state-change"
-  color       = "ededed"
-  description = "PR changes terraform/*.tf but intentionally no state; skips tfstate-guard"
+  rules {
+    deletion         = true
+    non_fast_forward = true
+
+    pull_request {
+      required_approving_review_count   = 0
+      dismiss_stale_reviews_on_push     = true
+      require_code_owner_review         = false
+      require_last_push_approval        = false
+      required_review_thread_resolution = true
+      allowed_merge_methods             = ["merge", "squash", "rebase"]
+    }
+
+    required_status_checks {
+      strict_required_status_checks_policy = true
+      do_not_enforce_on_create             = false
+
+      required_check {
+        context = "verify"
+      }
+    }
+  }
 }
 
 # Forward-looking: identifiers a future CI deploy/plan workflow would consume.

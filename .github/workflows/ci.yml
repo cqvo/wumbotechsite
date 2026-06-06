@@ -2,9 +2,6 @@ name: CI
 
 on:
   pull_request:
-    # Include labeled/unlabeled so applying the 'no-state-change' label re-runs
-    # the tfstate-guard check (the defaults are opened/synchronize/reopened).
-    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 jobs:
   verify:
@@ -22,36 +19,3 @@ jobs:
       # Client tests run in real Chromium via Playwright (see vite.config.ts).
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test
-
-  # State is applied locally and committed (see terraform/README.md). This guard
-  # catches a forgotten `git commit` of state: if any terraform/*.tf changed but
-  # the (encrypted) state file did not, fail. Bypass with the 'no-state-change'
-  # label for PRs that intentionally change no state (comments, removing applied
-  # import blocks, etc.).
-  tfstate-guard:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Require committed state when terraform/*.tf changes
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          LABELS: ${{ join(github.event.pull_request.labels.*.name, ' ') }}
-        run: |
-          # Checked inside the step (not a job-level `if`) so this required check
-          # always reports a result instead of going "skipped".
-          if printf '%s' "$LABELS" | grep -qw 'no-state-change'; then
-            echo "Label 'no-state-change' present — skipping state guard."
-            exit 0
-          fi
-          changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
-          echo "Changed files:"
-          printf '%s\n' "$changed"
-          if printf '%s\n' "$changed" | grep -qE '^terraform/.*\.tf$' \
-             && ! printf '%s\n' "$changed" | grep -qx 'terraform/terraform.tfstate'; then
-            echo "::error::terraform/*.tf changed but terraform/terraform.tfstate was not updated. Run 'tofu apply' locally and commit the encrypted state, or add the 'no-state-change' label if this PR intentionally changes no state."
-            exit 1
-          fi
-          echo "State guard OK."
