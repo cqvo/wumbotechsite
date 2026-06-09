@@ -36,5 +36,5 @@ import {
 # block — OpenTofu will create it from var.gtm_id instead.
 import {
   to = vercel_project_environment_variable.public_gtm_id
-  id = "team_hbvzY3Fd6qNjEiPHutKWYO2A/prj_ESMIJL9KI4jH8v2As0AC8vgDTdTI/<ENV_VAR_ID>"
+  id = "team_hbvzY3Fd6qNjEiPHutKWYO2A/prj_ESMIJL9KI4jH8v2As0AC8vgDTdTI/aZEEbaXH07LVykzH"
 }

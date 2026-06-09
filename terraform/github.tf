@@ -8,6 +8,9 @@ resource "github_repository" "site" {
   has_issues   = true
   has_projects = true
   has_wiki     = true
+  # Deprecated by GitHub but still set on the repo; declare it to avoid a
+  # perpetual import diff (emits a harmless deprecation warning).
+  has_downloads = true
 
   allow_merge_commit  = true
   allow_squash_merge  = true

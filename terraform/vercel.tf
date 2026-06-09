@@ -19,7 +19,9 @@ resource "vercel_project_environment_variable" "public_gtm_id" {
   project_id = vercel_project.site.id
   key        = "PUBLIC_GTM_ID"
   value      = var.gtm_id
-  target     = ["production", "preview", "development"]
+  # Matches the existing Vercel var (production only). Add "preview"/"development"
+  # here if you later want analytics in those environments.
+  target = ["production"]
 }
 
 # Custom domains attached to the project. The *.vercel.app domains are
@@ -29,6 +31,7 @@ resource "vercel_project_environment_variable" "public_gtm_id" {
 resource "vercel_project_domain" "apex" {
   project_id = vercel_project.site.id
   domain     = "wumbo.tech"
+  redirect   = "www.wumbo.tech" # apex redirects to www (matches live config)
 }
 
 resource "vercel_project_domain" "www" {
