@@ -14,6 +14,7 @@ Thumbs.db
 
 # Claude Code (machine-local)
 .claude/settings.local.json
+.claude/worktrees/
 
 # Env
 .env
