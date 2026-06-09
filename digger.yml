@@ -1,0 +1,4 @@
+projects:
+    - name: production
+      dir: smoke-test
+      opentofu: true
