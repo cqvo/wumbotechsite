@@ -1,5 +1,10 @@
 import { env } from '$env/dynamic/public';
-import type { Handle } from '@sveltejs/kit';
+import type { Handle, ServerInit } from '@sveltejs/kit';
+import { initOpenFeature } from '$lib/server/openfeature';
+
+export const init: ServerInit = async () => {
+	await initOpenFeature();
+};
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
