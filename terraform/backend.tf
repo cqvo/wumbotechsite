@@ -12,7 +12,7 @@ terraform {
     key    = "wumbotechsite/terraform.tfstate"
     region = "auto"
 
-    endpoints = { s3 = "https://<R2_ACCOUNT_ID>.r2.cloudflarestorage.com" }
+    endpoints = { s3 = "https://2dac5afbbf9ef38caffd8307c398e706.r2.cloudflarestorage.com" }
 
     use_lockfile   = true # native locking via S3 conditional writes (OpenTofu 1.12+)
     use_path_style = true
