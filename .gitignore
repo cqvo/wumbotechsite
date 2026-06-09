@@ -24,3 +24,15 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# OpenTofu / Terraform
+terraform/.terraform/
+terraform/*.tfplan
+terraform/terraform.tfvars
+terraform/*.auto.tfvars
+crash.log
+crash.*.log
+# State lives in Cloudflare R2 (see terraform/backend.tf), never in the repo.
+terraform/*.tfstate
+terraform/*.tfstate.*
+# Keep .terraform.lock.hcl tracked.

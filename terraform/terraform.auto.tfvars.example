@@ -1,0 +1,32 @@
+# Copy to `terraform.auto.tfvars` (auto-loaded by OpenTofu, gitignored).
+#
+#   cp terraform.auto.tfvars.example terraform.auto.tfvars
+#
+# NEVER commit terraform.auto.tfvars — it holds secrets in plaintext.
+#
+# NOTE: the Cloudflare R2 state-backend credentials are NOT set here. They are
+# environment variables (see README), since backend config can't read tfvars:
+#   export AWS_ACCESS_KEY_ID=...        # R2 API token access key id
+#   export AWS_SECRET_ACCESS_KEY=...    # R2 API token secret
+#
+# Alternatively, skip this file and export each value below as TF_VAR_<name>,
+# pulling secrets from 1Password, e.g.:
+#   export TF_VAR_state_passphrase=$(op read "op://Private/wumbo-tofu-state/passphrase")
+
+# --- Required, non-secret ---
+gtm_id = "GTM-XXXXXXX"
+
+# --- Secrets (this file is gitignored; treat as sensitive) ---
+# Strong, high-entropy, >= 16 chars. Store the real value in 1Password — losing
+# it makes the encrypted state in R2 unrecoverable.
+state_passphrase = "replace-with-a-long-random-passphrase"
+vercel_api_token = "xxxxxxxxxxxxxxxxxxxxxxxx" # vercel.com/account/tokens
+github_token     = "ghp_xxxxxxxxxxxxxxxxxxxx" # fine-grained PAT (see README) or classic 'repo'
+
+# --- Optional ---
+# Set to create the CI VERCEL_TOKEN GitHub Actions secret; leave "" to skip.
+ci_vercel_token = ""
+
+# --- Overridable defaults (already set in variables.tf) ---
+# vercel_team_id = "team_hbvzY3Fd6qNjEiPHutKWYO2A"
+# github_owner   = "cqvo"
