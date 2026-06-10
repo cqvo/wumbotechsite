@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "svelte": {
+    "astro-docs": {
       "type": "http",
-      "url": "https://mcp.svelte.dev/mcp"
+      "url": "https://mcp.docs.astro.build/mcp"
     },
     "vercel": {
       "type": "http",
