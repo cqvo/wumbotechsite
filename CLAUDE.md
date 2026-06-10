@@ -4,70 +4,56 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-This project uses **pnpm** (see `packageManager` in `package.json`).
+This project uses **pnpm** (see `packageManager` in `package.json`; Node ≥ 22.12).
 
-- `pnpm dev` — start the Vite dev server (`pnpm dev --open` to open a browser)
-- `pnpm build` — production build (SvelteKit + Vercel adapter)
+- `pnpm dev` — start the Astro dev server (http://localhost:4321)
+- `pnpm build` — `astro check` → `astro build` → build the Pagefind search index
 - `pnpm preview` — preview the production build locally
-- `pnpm check` — sync SvelteKit and run `svelte-check` type checking (`pnpm check:watch` for watch mode)
+- `pnpm sync` — regenerate Astro types (`astro sync`); run after changing content schemas or env config
 - `pnpm lint` — Prettier check + ESLint
 - `pnpm format` — auto-format with Prettier
-- `pnpm test` — run all tests once (Vitest); `pnpm test:unit` for watch mode
 
-### Running a single test
+There is no unit-test framework; `pnpm build` (which runs `astro check`) is the type/build gate, and is what CI's `verify` job runs.
 
-Tests run under two Vitest projects (see below), so target by project and name:
+## Architecture
 
-- `pnpm test:unit -- --project client path/to/file.svelte.spec.ts`
-- `pnpm test:unit -- --project server path/to/file.spec.ts`
-- Filter by test name with `-t "partial name"`
+Static **Astro 6** site using the **AstroPaper v6** theme, deployed to **Vercel** as pure static output (`output: 'static'`, no adapter). Styling is **Tailwind CSS v4** (via `@tailwindcss/vite`); search is **Pagefind**; content is editable via **Pages CMS**.
 
-## Testing architecture
+- **Config split:** edit `astro-paper.config.ts` for site identity, features, and socials. `src/config.ts` only resolves it with defaults — don't edit it. `astro.config.ts` holds integrations (mdx, sitemap), markdown/Shiki config, fonts, and the `astro:env` schema.
+- **Content collections** (`src/content.config.ts`): `posts` (`src/content/posts/`) and `pages` (`src/content/pages/`), loaded with `glob()`. Files/folders prefixed with `_` are excluded. Post dates use `z.coerce.date()` so Pages-CMS-written ISO strings and hand-authored YAML timestamps both parse. The field named `body` in `.pages.yml` maps to the Markdown body.
+- **Routes** are file-based under `src/pages/` (`index.astro`, `posts/`, `tags/`, `archives/`, `search.astro`, `rss.xml.ts`, dynamic OG images via `og.png.ts` + `[...slug]/index.png.ts`).
+- **Base layout** `src/layouts/Layout.astro` owns `<head>` (SEO/OG meta, fonts, the FOUC theme script, `<ClientRouter />`) and is where analytics + the noindex meta are injected.
 
-Vitest is configured with **two projects** in `vite.config.ts`:
+## Analytics & environment
 
-- **client** — runs `*.svelte.{test,spec}.{js,ts}` in a real Chromium browser via Playwright. Use `vitest-browser-svelte`'s `render` and `vitest/browser`'s `page` for component tests (see `src/routes/(main)/page.svelte.spec.ts`). Excludes `src/lib/server/**`.
-- **server** — runs plain `*.{test,spec}.{js,ts}` (non-Svelte) in a Node environment (see `src/demo.spec.ts`).
+Three client components in `src/components/` are wired into `Layout.astro`:
 
-`expect.requireAssertions` is enabled — every test must make at least one assertion.
+- `GoogleTagManager.astro` — head snippet, renders only when `PUBLIC_GTM_ID` is set (provisioned for production via Terraform); the matching `<noscript>` is in `Layout.astro`'s body.
+- `Amplitude.astro` — autocapture init using `PUBLIC_AMPLITUDE_API_KEY` (falls back to a public demo key).
+- `SpeedInsights.astro` — Vercel Speed Insights, gated to production via `process.env.VERCEL_ENV === 'production'`.
 
-## Code architecture
+Public env vars are declared in the `env.schema` in `astro.config.ts` and read via `astro:env/client`. Build-time-only flags (e.g. prod gating, noindex) use `process.env.VERCEL_ENV` (not exposed to the client). Non-production builds emit `<meta name="robots" content="noindex, nofollow">`.
 
-SvelteKit app (Svelte 5 runes) deployed to **Vercel** (`@sveltejs/adapter-vercel`). Styling is **Tailwind CSS v4** + **Skeleton UI v4**.
+## Styling
 
-- **Routes** use [route groups](https://svelte.dev/docs/kit/advanced-routing#advanced-layouts-group). The root `src/routes/+layout.svelte` is global (favicon, analytics injection). The `(main)` group has its own layout wrapping content in `<main>`. Add new route groups for sections that need a distinct layout.
-- **Tailwind/Skeleton config lives in CSS**, not JS. `src/routes/layout.css` imports Tailwind, Skeleton, the `terminus` theme, and plugins via `@import`/`@plugin`. The active theme is set with `data-theme="terminus"` on `<html>` in `src/app.html`. Dark mode uses a custom variant keyed on `[data-mode=dark]`. Prettier's `tailwindStylesheet` points at this file for class sorting.
-- **`$lib` modules** are organized by feature with barrel `index.ts` files re-exporting components (e.g. `$lib/analytics` exports `GoogleTagManager` and `SpeedInsights`; `$lib/ui` exports `Sidebar`). Import from the barrel, not the component file.
-- **Analytics** (`src/lib/analytics`) is injected once in the root layout: Google Tag Manager (raw snippet in `<svelte:head>`) and Vercel Speed Insights (`injectSpeedInsights()`).
+Tailwind v4 with config in CSS, not JS:
+
+- `src/styles/global.css` imports Tailwind, the theme, typography, and defines the `dark` variant (`@custom-variant dark (&:where([data-theme=dark], ...))`).
+- `src/styles/theme.css` registers design tokens (`@theme inline`) and sets the light/dark CSS variables (`--accent`, `--background`, `--foreground`, `--muted`, `--border`, …). Theme classes: `text-accent`, `bg-background`, `text-foreground`, `border-border`, `text-muted-foreground`, etc.
+- Note Tailwind v4 renames: use `bg-linear-to-r` (not `bg-gradient-to-r`). Prettier's `tailwindStylesheet` points at `src/styles/global.css` for class sorting.
 
 ## Conventions
 
-- **Svelte 5 runes** only — use `$props()`, `$state()`, etc. Layouts receive `let { children } = $props()` and render with `{@render children()}`.
-- Prettier: **tabs**, single quotes, no trailing commas, 100-char width. Run `pnpm format` before committing.
-- TypeScript is `strict` with `checkJs` enabled — `.js` files are type-checked too.
+- Astro components (`.astro`) with Tailwind utility classes.
+- Prettier (see `.prettierrc`): **2-space**, double quotes, semicolons, `printWidth` 100→80 default, `arrowParens: avoid`. Run `pnpm format` before committing.
+- ESLint: `eslint-plugin-astro` recommended + `no-console: error`. Inline (`is:inline`) scripts are exempt; bundled `<script>` blocks are linted.
 
----
+## Deployment & IaC
 
-You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
+- **Vercel** builds on push (production = `main`, preview = PRs); build command `pnpm build`, output `dist/`.
+- **OpenTofu** in `terraform/` manages the Vercel project (`framework = "astro"`), domains (`wumbo.tech` → `www.wumbo.tech`), the `PUBLIC_GTM_ID` production env var, and the GitHub repo + branch-protection ruleset (which requires the CI status check named `verify`). State is in Cloudflare R2; plan/apply runs via Digger. If you change framework/build settings, run `tofu plan` in `terraform/`.
+- **Pages CMS** edits commit Markdown to the repo (config in `.pages.yml`), which triggers a Vercel deploy. The Pages CMS GitHub App must be authorized on the repo (one-time manual step at app.pagescms.org).
 
-## Available Svelte MCP Tools:
+## Astro docs
 
-### 1. list-sections
-
-Use this FIRST to discover all available documentation sections. Returns a structured list with titles, use_cases, and paths.
-When asked about Svelte or SvelteKit topics, ALWAYS use this tool at the start of the chat to find relevant sections.
-
-### 2. get-documentation
-
-Retrieves full documentation content for specific sections. Accepts single or multiple sections.
-After calling the list-sections tool, you MUST analyze the returned documentation sections (especially the use_cases field) and then use the get-documentation tool to fetch ALL documentation sections that are relevant for the user's task.
-
-### 3. svelte-autofixer
-
-Analyzes Svelte code and returns issues and suggestions.
-You MUST use this tool whenever writing Svelte code before sending it to the user. Keep calling it until no issues or suggestions are returned.
-
-### 4. playground-link
-
-Generates a Svelte Playground link with the provided code.
-After completing the code, ask the user if they want a playground link. Only call this tool after user confirmation and NEVER if code was written to files in their project.
+An Astro Docs MCP server (`https://mcp.docs.astro.build/mcp`) is configured for up-to-date Astro/AstroPaper documentation — use it when working on Astro features.

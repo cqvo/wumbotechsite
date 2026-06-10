@@ -15,7 +15,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
-      - run: pnpm check
-      # Client tests run in real Chromium via Playwright (see vite.config.ts).
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm test
+      # `pnpm build` runs `astro check` (type-check), then `astro build`, then
+      # the Pagefind search index — so a green build covers types + prod build.
+      - run: pnpm build

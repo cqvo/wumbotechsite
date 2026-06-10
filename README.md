@@ -1,120 +1,99 @@
 # wumbo.tech
 
-Source for [wumbo.tech](https://wumbo.tech) — a personal site built with SvelteKit.
+The worldwide leader in wumbology — a blog built with [Astro](https://astro.build/)
+and the [AstroPaper](https://github.com/satnaing/astro-paper) theme, with content
+managed through [Pages CMS](https://pagescms.org/) and deployed to Vercel.
 
 ## Tech stack
 
-- **[SvelteKit](https://svelte.dev/docs/kit)** (Svelte 5 runes) on the **[Vercel](https://vercel.com)** adapter
-- **[Tailwind CSS v4](https://tailwindcss.com)** + **[Skeleton UI v4](https://www.skeleton.dev)** — configured in CSS (`src/routes/layout.css`)
-- **TypeScript** (strict, with `checkJs`)
-- **[OpenFeature](https://openfeature.dev)** + **[Vercel Flags](https://vercel.com/docs/flags/vercel-flags)** for server-side feature flags
-- **[Vitest](https://vitest.dev)** + **[Playwright](https://playwright.dev)** for tests
-- **[pnpm](https://pnpm.io)** package manager
+- **[Astro 6](https://astro.build/)** — static site generation (no adapter; pure `output: 'static'`).
+- **[AstroPaper v6](https://github.com/satnaing/astro-paper)** — minimal, accessible, SEO-friendly blog theme.
+- **[Tailwind CSS v4](https://tailwindcss.com/)** via `@tailwindcss/vite` (config lives in `src/styles/`).
+- **[Pagefind](https://pagefind.app/)** — static, build-time search index.
+- **[Pages CMS](https://pagescms.org/)** — Git-based content editing (see [`.pages.yml`](./.pages.yml)).
+- **Analytics** — Google Tag Manager, Amplitude, and Vercel Speed Insights (production only).
+- **Deploy + IaC** — Vercel, managed with OpenTofu (state in Cloudflare R2, orchestrated by Digger).
 
 ## Prerequisites
 
-- **Node 22** — the Vercel runtime is pinned to `nodejs22.x` in `svelte.config.js`
-- **pnpm 10** — enable via Corepack:
-
-  ```sh
-  corepack enable
-  ```
+- **Node ≥ 22.12** (see `engines` in `package.json`).
+- **pnpm 10** — enable via Corepack: `corepack enable && corepack prepare pnpm@10.15.0 --activate`.
 
 ## Getting started
 
 ```sh
 pnpm install
-pnpm dev          # start the dev server
-pnpm dev --open   # …and open it in a browser
+pnpm dev        # http://localhost:4321
 ```
 
 ## Scripts
 
-| Script         | Description                                                         |
-| -------------- | ------------------------------------------------------------------- |
-| `pnpm dev`     | Start the Vite dev server                                           |
-| `pnpm build`   | Production build (SvelteKit + Vercel adapter)                       |
-| `pnpm preview` | Preview the production build locally                                |
-| `pnpm check`   | Sync SvelteKit and run `svelte-check` (`pnpm check:watch` to watch) |
-| `pnpm lint`    | Prettier check + ESLint                                             |
-| `pnpm format`  | Auto-format with Prettier                                           |
-| `pnpm test`    | Run all tests once (`pnpm test:unit` for watch mode)                |
+| Command        | Description                                               |
+| -------------- | --------------------------------------------------------- |
+| `pnpm dev`     | Start the Astro dev server.                               |
+| `pnpm build`   | `astro check` → `astro build` → build the Pagefind index. |
+| `pnpm preview` | Preview the production build locally.                     |
+| `pnpm sync`    | Regenerate Astro types (`astro sync`).                    |
+| `pnpm lint`    | Prettier check + ESLint.                                  |
+| `pnpm format`  | Auto-format with Prettier.                                |
 
-## Testing
+## Content
 
-Vitest runs as two projects (see `vite.config.ts`):
+Content is plain Markdown in the repository, validated at build time by the Zod
+schemas in `src/content.config.ts`:
 
-- **client** — `*.svelte.{test,spec}.{js,ts}` in real Chromium via Playwright (`vitest-browser-svelte`).
-- **server** — plain `*.{test,spec}.{js,ts}` in Node.
+- **Blog posts** — `src/content/posts/*.md(x)`. Frontmatter: `title`, `description`,
+  `pubDatetime` (required); `author`, `modDatetime`, `featured`, `draft`, `tags`,
+  `ogImage`, `canonicalURL` (optional). Files/folders prefixed with `_` are ignored.
+- **About page** — `src/content/pages/about.md`.
 
-Every test must make at least one assertion (`expect.requireAssertions` is enabled). Target a single
-file by project, e.g.:
+### Editing with Pages CMS
 
-```sh
-pnpm test:unit -- --project client src/routes/\(main\)/page.svelte.spec.ts
-pnpm test:unit -- --project server src/demo.spec.ts
-```
+[`.pages.yml`](./.pages.yml) describes the collections and fields. To edit through
+the web UI:
+
+1. Go to [app.pagescms.org](https://app.pagescms.org/) and sign in with GitHub.
+2. Install/authorize the Pages CMS GitHub App on `cqvo/wumbotechsite`.
+3. Edit posts or the about page; changes are committed back to the repo, which
+   triggers a Vercel deploy.
+
+Field names in `.pages.yml` mirror the content schema, so CMS edits stay valid.
 
 ## Project structure
 
-- `src/routes` — pages, organized with [route groups](https://svelte.dev/docs/kit/advanced-routing#advanced-layouts-group); the root `+layout.svelte` is global, the `(main)` group has its own layout.
-- `src/lib` — feature modules with barrel `index.ts` files (e.g. `$lib/analytics`, `$lib/ui`); import from the barrel.
-- Styling — Tailwind, Skeleton, the theme, and plugins are imported in `src/routes/layout.css`.
-
-See **[`CLAUDE.md`](./CLAUDE.md)** for the full conventions and architecture notes.
-
-## Feature flags
-
-Server-side flags go through the vendor-neutral [OpenFeature](https://openfeature.dev) API, backed by
-[Vercel Flags](https://vercel.com/docs/flags/vercel-flags). The provider is wired up in
-`$lib/server/openfeature` (server-only) and registered once at startup via the `init` hook in
-`src/hooks.server.ts`. Initialization is fail-safe: if flag definitions can't be loaded, it logs and
-continues, and evaluations fall back to their call-site defaults.
-
-Evaluate a flag from any server code (`+page.server.ts`, `+server.ts`, hooks, …):
-
-```ts
-import { getFeatureClient } from '$lib/server/openfeature';
-
-const enabled = await getFeatureClient().getBooleanValue('marketing-banner', false);
+```
+astro.config.ts          # Astro config: integrations, markdown, fonts, env schema
+astro-paper.config.ts    # Site identity, features, socials (edit this, not src/config.ts)
+.pages.yml               # Pages CMS configuration
+src/
+  components/            # Astro components (incl. GoogleTagManager, Amplitude, SpeedInsights)
+  content/
+    posts/               # Blog posts (Markdown)
+    pages/about.md       # About page
+  content.config.ts      # Content collection schemas
+  layouts/Layout.astro   # Base HTML layout (head, analytics, noindex)
+  pages/                 # Routes (index, posts, tags, archives, search, rss, og)
+  styles/                # Tailwind v4 + theme tokens
+terraform/               # OpenTofu: Vercel project, domains, GitHub repo + ruleset
 ```
 
-To create and manage flags (one-time setup, requires the [Vercel CLI](https://vercel.com/docs/cli)):
+## Environment variables
 
-1. Create a flag in the Vercel Dashboard → **Flags**. This provisions a `FLAGS` env var on the project.
-2. Pull it locally: `vercel link` (if needed), then `vercel env pull` → writes `FLAGS` into `.env.local`.
+All are optional and gracefully degrade when unset.
 
-Without `FLAGS` (e.g. a fresh clone), evaluations simply return their defaults. On Vercel, flag
-definitions are bundled at build time as a runtime fallback.
+| Variable                          | Used for              | Notes                                                                              |
+| --------------------------------- | --------------------- | ---------------------------------------------------------------------------------- |
+| `PUBLIC_GTM_ID`                   | Google Tag Manager    | Provisioned for **production** via Terraform.                                      |
+| `PUBLIC_AMPLITUDE_API_KEY`        | Amplitude             | Falls back to a public demo key.                                                   |
+| `PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console | Optional.                                                                          |
+| `VERCEL_ENV`                      | Prod gating           | Injected by Vercel; enables Speed Insights and search indexing only in production. |
+
+Non-production deployments emit `<meta name="robots" content="noindex, nofollow">`.
 
 ## Deployment
 
-The site deploys to **Vercel** (`@sveltejs/adapter-vercel`) through Vercel's native Git
-integration — no Vercel token or custom CI deploy steps:
-
-| Trigger             | Result                                                                   |
-| ------------------- | ------------------------------------------------------------------------ |
-| Push / merge `main` | Production deploy → `wumbo.tech` / `www.wumbo.tech`                      |
-| Open a pull request | Automatic Vercel **Preview** URL (ephemeral staging — `noindex`, no GTM) |
-
-GitHub Actions runs `pnpm lint`, `pnpm check`, and `pnpm test` on every pull request
-(`.github/workflows/ci.yml`) to gate merges. The serverless runtime is pinned to `nodejs22.x`
-in `svelte.config.js`.
-
-### Environment isolation
-
-Analytics and SEO key off Vercel's standard **Production** / **Preview** environments:
-
-- **Analytics** — the GTM snippet renders only when `PUBLIC_GTM_ID` is set, and Vercel Speed
-  Insights only runs when `PUBLIC_VERCEL_TARGET_ENV === 'production'`.
-- **SEO** — `src/hooks.server.ts` sends `X-Robots-Tag: noindex, nofollow` on every
-  non-production deployment, keeping preview URLs out of search indexes.
-
-### Required configuration (Vercel)
-
-- Git integration connected with the **Production Branch** set to `main` (the default).
-- Env var `PUBLIC_GTM_ID = GTM-5K34KN7M` set on the **Production** environment only — leave it
-  unset for Preview/Development so preview URLs stay GTM-free. (`PUBLIC_VERCEL_TARGET_ENV` is
-  injected automatically by Vercel.)
-- Env var `FLAGS` — provisioned automatically by Vercel Flags when the first flag is created; no
-  manual setup. Pull it locally with `vercel env pull` (see [Feature flags](#feature-flags)).
+Vercel builds on every push (production = `main`, preview = PRs). The Vercel
+project, custom domains (`wumbo.tech` → `www.wumbo.tech`), and the GitHub repo /
+branch protection are managed by OpenTofu in [`terraform/`](./terraform); see that
+directory for plan/apply via Digger. The Vercel build command is `pnpm build`
+with output directory `dist/`.

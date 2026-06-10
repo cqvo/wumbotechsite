@@ -1,12 +1,14 @@
-# Package Managers
+# Package managers
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
 bun.lock
 bun.lockb
 
-# Miscellaneous
-/static/
+# Build output & generated
+dist/
+.astro/
+public/pagefind
 
 # Agent tooling (third-party / generated — not project source)
 .agents/

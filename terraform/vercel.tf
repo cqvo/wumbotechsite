@@ -1,9 +1,15 @@
 resource "vercel_project" "site" {
   name      = "wumbotechsite"
-  framework = "svelte"
+  framework = "astro"
 
-  # Matches svelte.config.js (adapter pinned to nodejs22.x).
+  # AstroPaper requires Node >= 22.12 (see package.json "engines").
   node_version = "22.x"
+
+  # Astro outputs a static site to dist/. Override the framework preset's
+  # default build command so Pagefind (the search index) is generated as part
+  # of `pnpm build`.
+  build_command    = "pnpm build"
+  output_directory = "dist"
 
   git_repository = {
     type              = "github"
