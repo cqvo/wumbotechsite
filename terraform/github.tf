@@ -1,8 +1,8 @@
 # Mirrors the repo's current settings so the post-import plan shows no changes.
 resource "github_repository" "site" {
-  name         = "wumbotechsite-svelte"
+  name         = "wumbotechsite"
   description  = ""
-  homepage_url = "https://wumbotechsite-svelte.vercel.app"
+  homepage_url = "https://wumbotechsite.vercel.app"
   visibility   = "public"
 
   has_issues   = true

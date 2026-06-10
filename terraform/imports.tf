@@ -22,13 +22,13 @@ import {
 
 import {
   to = github_repository.site
-  id = "wumbotechsite-svelte"
+  id = "wumbotechsite"
 }
 
 # Existing "Protect main" repository ruleset.
 import {
   to = github_repository_ruleset.main
-  id = "wumbotechsite-svelte:17300958"
+  id = "wumbotechsite:17300958"
 }
 
 # PUBLIC_GTM_ID env var. The ID is fetched with the Vercel token (see README
