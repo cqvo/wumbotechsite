@@ -1,6 +1,6 @@
 # Infrastructure (OpenTofu)
 
-Manages the Vercel project and the `cqvo/wumbotechsite-svelte` GitHub repo as code.
+Manages the Vercel project and the `cqvo/wumbotechsite` GitHub repo as code.
 
 - **Tool:** [OpenTofu](https://opentofu.org) (`tofu`) — `brew install opentofu`.
 - **State:** **Cloudflare R2** (S3-compatible) via the `s3` backend, encrypted **client-side** by OpenTofu (AES-256-GCM, see `encryption.tf`) so R2 only ever stores ciphertext. State is **never** committed to the repo.
@@ -28,7 +28,7 @@ Manages the Vercel project and the `cqvo/wumbotechsite-svelte` GitHub repo as co
    - Put your account ID into the endpoint in `backend.tf` (and the bucket name if different).
 3. **Create the provider credentials:**
    - Vercel API token → https://vercel.com/account/tokens
-   - GitHub token → a **fine-grained** PAT scoped to only `cqvo/wumbotechsite-svelte`
+   - GitHub token → a **fine-grained** PAT scoped to only `cqvo/wumbotechsite`
      (see [GitHub token permissions](#github-token-permissions)); a classic `repo`-scope PAT also works.
    - A strong state passphrase (≥ 16 chars) → store in **1Password**.
 4. **Export credentials** (R2 keys are env vars, not tfvars). Pull secrets from 1Password:
@@ -48,7 +48,7 @@ Manages the Vercel project and the `cqvo/wumbotechsite-svelte` GitHub repo as co
 
 ### GitHub token permissions
 
-Fine-grained PAT scoped to **only** `cqvo/wumbotechsite-svelte` (repository permissions):
+Fine-grained PAT scoped to **only** `cqvo/wumbotechsite` (repository permissions):
 
 | Permission     | Access         | Used by                                                                 |
 | -------------- | -------------- | ----------------------------------------------------------------------- |

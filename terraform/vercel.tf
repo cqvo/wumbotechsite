@@ -1,5 +1,5 @@
 resource "vercel_project" "site" {
-  name      = "wumbotechsite-svelte"
+  name      = "wumbotechsite"
   framework = "svelte"
 
   # Matches svelte.config.js (adapter pinned to nodejs22.x).
@@ -7,7 +7,7 @@ resource "vercel_project" "site" {
 
   git_repository = {
     type              = "github"
-    repo              = "cqvo/wumbotechsite-svelte"
+    repo              = "cqvo/wumbotechsite"
     production_branch = "main"
   }
 }
