@@ -1,12 +1,16 @@
 node_modules
 
-# Output
-.output
+# Astro build output
+dist/
+.astro/
+
+# Pagefind search index (generated into public/ by `pnpm build`)
+public/pagefind
+
+# Deploy platforms
 .vercel
 .netlify
 .wrangler
-/.svelte-kit
-/build
 
 # OS
 .DS_Store
@@ -21,10 +25,6 @@ Thumbs.db
 .env.*
 !.env.example
 !.env.test
-
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
 
 # OpenTofu / Terraform
 terraform/.terraform/

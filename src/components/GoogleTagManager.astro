@@ -1,0 +1,14 @@
+---
+// Google Tag Manager head snippet. Renders only when PUBLIC_GTM_ID is set
+// (the id is provisioned for the production environment via Terraform), so it
+// no-ops in preview/development. The matching <noscript> lives in Layout.astro.
+// The snippet is emitted via `set:html` so the inline JS is a plain string —
+// this keeps Prettier/ESLint from trying to parse it.
+import { PUBLIC_GTM_ID } from "astro:env/client";
+
+const gtmId = PUBLIC_GTM_ID;
+
+const snippet = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmId}');`;
+---
+
+{gtmId && <script is:inline set:html={snippet} />}

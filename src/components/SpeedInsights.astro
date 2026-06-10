@@ -1,0 +1,9 @@
+---
+// Vercel Speed Insights, enabled only for production deployments (matching the
+// previous SvelteKit behaviour). VERCEL_ENV is injected by Vercel at build time.
+import VercelSpeedInsights from "@vercel/speed-insights/astro";
+
+const isProd = process.env.VERCEL_ENV === "production";
+---
+
+{isProd && <VercelSpeedInsights />}

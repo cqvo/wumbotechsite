@@ -1,0 +1,53 @@
+# Pages CMS configuration — https://pagescms.org/docs/configuration
+# Field names mirror the Astro content collections in src/content.config.ts so
+# anything edited here stays valid against the build's zod schemas.
+
+media:
+  input: public
+  output: /
+
+content:
+  - name: posts
+    label: Posts
+    type: collection
+    path: src/content/posts
+    filename: "{fields.title}.md"
+    view:
+      fields: [title, pubDatetime, draft]
+      primary: title
+      sort: [pubDatetime, title]
+      default:
+        sort: pubDatetime
+        order: desc
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: description, label: Description, type: text, required: true }
+      - {
+          name: pubDatetime,
+          label: Published,
+          type: date,
+          required: true,
+          options: { time: true },
+        }
+      - {
+          name: modDatetime,
+          label: Last modified,
+          type: date,
+          options: { time: true },
+        }
+      - { name: author, label: Author, type: string }
+      - { name: featured, label: Featured, type: boolean, default: false }
+      - { name: draft, label: Draft, type: boolean, default: false }
+      - { name: tags, label: Tags, type: string, list: true }
+      - { name: ogImage, label: OG image, type: image }
+      - { name: canonicalURL, label: Canonical URL, type: string }
+      - { name: body, label: Body, type: rich-text }
+
+  - name: about
+    label: About page
+    type: file
+    path: src/content/pages/about.md
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: description, label: Description, type: text }
+      - { name: body, label: Body, type: rich-text }

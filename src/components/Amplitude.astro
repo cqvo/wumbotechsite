@@ -1,0 +1,14 @@
+---
+// Amplitude unified analytics with autocapture. Initializes client-side using
+// PUBLIC_AMPLITUDE_API_KEY, falling back to the public demo key (matching the
+// previous SvelteKit behaviour).
+---
+
+<script>
+  import * as amplitude from "@amplitude/unified";
+  import { PUBLIC_AMPLITUDE_API_KEY } from "astro:env/client";
+
+  const apiKey = PUBLIC_AMPLITUDE_API_KEY ?? "bf6f5ee6de23eeb0b2fd7facbe621e33";
+
+  amplitude.initAll(apiKey, { analytics: { autocapture: true } });
+</script>
