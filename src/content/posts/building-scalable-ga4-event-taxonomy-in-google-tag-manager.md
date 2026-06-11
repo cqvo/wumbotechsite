@@ -108,9 +108,24 @@ inheritance. They allow you to define a base event parameter schema that
 automatically applies to multiple event types and allows for overwriting values
 on a per-event level.
 
+![GA4 - Event Settings - Clicks variable in GTM showing six base click parameters](../../assets/images/gtm-click-event-settings-variable.png)
+
 The first four parameters (`link_classes`, `link_id`, `link_url`, `link_text`)
 use GTM's built-in variables for their values. For the last two (`link_domain`,
 `outbound`), you need to create new user-defined variables to bridge the gap.
+
+The `link_domain` variable is an Auto-Event Variable using the Element URL
+variable type with Host Name as the component — with "Strip 'www.'" checked so
+that `example.com` and `www.example.com` normalize to the same value across all
+your events.
+
+![Click URL Domain Auto-Event Variable — host name, strips www.](../../assets/images/gtm-link-domain-variable.png)
+
+The `outbound` variable is also an Auto-Event Variable, using the Is Outbound
+component type. This is the piece that lets you actually vary the `outbound`
+parameter instead of it being hardcoded to `true`.
+
+![Click URL is Outbound Auto-Event Variable](../../assets/images/gtm-outbound-variable.png)
 
 ### Draw the Rest of The Owl
 
