@@ -114,6 +114,8 @@ use GTM's built-in variables for their values. For the last two (`link_domain`,
 
 ### Draw the Rest of The Owl
 
+![Draw the rest of the owl](../../assets/images/draw-the-rest-of-the-owl.jpg)
+
 Create a new GA4 event tag for the `click` event, select our new Event Settings
 variable, and apply a trigger for all link clicks. Remember to go to your
 Google tag's enhanced measurement settings and turn off outbound clicks.
