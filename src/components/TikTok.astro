@@ -1,0 +1,17 @@
+---
+interface Props {
+  videoId: string;
+}
+const { videoId } = Astro.props;
+const cite = `https://www.tiktok.com/video/${videoId}`;
+---
+
+<blockquote
+  class="tiktok-embed"
+  cite={cite}
+  data-video-id={videoId}
+  style="max-width:605px;min-width:325px;"
+>
+  <section></section>
+</blockquote>
+<script is:inline src="https://www.tiktok.com/embed.js"></script>
