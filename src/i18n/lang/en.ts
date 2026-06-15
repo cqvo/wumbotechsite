@@ -70,7 +70,7 @@ export default {
   },
   consent: {
     message:
-      "We use cookies and analytics to understand site traffic. Analytics load only if you accept.",
+      "We use cookies and analytics to understand site traffic.",
     accept: "Accept",
     reject: "Reject",
     privacyPolicy: "Privacy policy",
