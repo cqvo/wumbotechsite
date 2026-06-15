@@ -5,7 +5,14 @@ import Header from "@/components/Header.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
+import Socials from "@/components/Socials.astro";
+import { useTranslations } from "@/i18n";
 import config from "@/config";
+
+const { socials } = config;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
 
 const about = await getEntry("pages", "about");
 
@@ -29,6 +36,49 @@ const { Content } = await render(about);
   <Breadcrumb />
 
   <Main pageTitle={about.data.title} class="app-prose">
+    <section id="hero" class="border-b border-border pt-8 pb-6">
+      <p class="my-4 text-4xl font-bold sm:my-8 sm:text-5xl">
+        The worldwide leader in <span
+          class="bg-linear-to-r from-sky-400 to-purple-600 box-decoration-clone bg-clip-text text-transparent dark:from-orange-400 dark:to-rose-500"
+          >wumbology</span
+        >.
+      </p>
+
+      <div
+        class="mt-2 max-w-md rounded-lg border border-border bg-muted/40 p-4"
+      >
+        <h2 class="mb-2 text-2xl font-bold">
+          <span class="text-accent">wum·bo·lo·gy</span>
+          <span class="ml-2 text-sm text-muted-foreground">noun</span>
+        </h2>
+        <p class="mb-4 italic">The study of wumbo.</p>
+        <div class="mb-4">
+          <h3 class="font-semibold">Example</h3>
+          <p class="text-muted-foreground">
+            I wumbo, you wumbo, he/she/me wumbo.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold">Other uses</h3>
+          <ol class="list-inside list-decimal text-muted-foreground">
+            <li>Wumboing</li>
+            <li>Wumborama</li>
+          </ol>
+        </div>
+      </div>
+
+      {
+        socials.length > 0 && (
+          <div class="mt-6 flex max-sm:flex-col sm:items-center">
+            <div class="me-2 mb-1 whitespace-nowrap sm:mb-0">
+              {t.home.socialLinks}:
+            </div>
+            <Socials />
+          </div>
+        )
+      }
+    </section>
+
     <Content />
   </Main>
 

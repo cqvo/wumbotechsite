@@ -29,7 +29,10 @@ export default defineAstroPaperConfig({
     search: "pagefind",
     consent: { enabled: true },
   },
-  socials: [{ name: "github", url: "https://github.com/cqvo/wumbotechsite" }],
+  socials: [
+    { name: "github", url: "https://github.com/cqvo" },
+    { name: "linkedin", url: "https://www.linkedin.com/in/chris-v-39389984/" },
+  ],
   shareLinks: [
     { name: "whatsapp", url: "https://wa.me/?text=" },
     { name: "facebook", url: "https://www.facebook.com/sharer.php?u=" },
