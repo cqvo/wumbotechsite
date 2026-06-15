@@ -1,7 +1,8 @@
 ---
-// Opt-in cookie/analytics consent banner. Hidden by default; the consent script
-// reveals it only when the visitor has not yet made a choice, and gates GTM,
-// Amplitude, and Speed Insights behind an explicit Accept.
+// Cookie/analytics consent banner. Hidden by default; the consent script
+// reveals it only when the visitor has not yet made a choice. GTM loads
+// unconditionally with Google Consent Mode v2 signals, while Amplitude and Speed
+// Insights are gated behind analytics_storage consent.
 import { useTranslations } from "@/i18n";
 import config from "@/config";
 
