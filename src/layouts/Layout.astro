@@ -5,10 +5,7 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
 import { getAssetPath } from "@/utils/withBase";
 import config from "@/config";
-import GoogleTagManager from "@/components/GoogleTagManager.astro";
-import Amplitude from "@/components/Amplitude.astro";
-import SpeedInsights from "@/components/SpeedInsights.astro";
-import { PUBLIC_GTM_ID } from "astro:env/client";
+import ConsentBanner from "@/components/ConsentBanner.astro";
 import "@/styles/global.css";
 
 type Props = {
@@ -20,7 +17,6 @@ type Props = {
 
 const { site } = config;
 
-const gtmId = PUBLIC_GTM_ID;
 // VERCEL_ENV is injected by Vercel at build time ("production" | "preview" |
 // "development"); undefined locally. Non-production builds are kept out of
 // search indexes, mirroring the previous server X-Robots-Tag behaviour.
@@ -56,9 +52,6 @@ const rssHref = getRelativeLocaleUrl(
 
     {/* Keep non-production deployments out of search indexes. */}
     {!isProd && <meta name="robots" content="noindex, nofollow" />}
-
-    {/* Google Tag Manager (no-ops unless PUBLIC_GTM_ID is set). */}
-    <GoogleTagManager />
 
     <!-- Font -->
     <Font
@@ -135,22 +128,8 @@ const rssHref = getRelativeLocaleUrl(
   <body
     class="flex min-h-svh flex-col bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground"
   >
-    {
-      gtmId && (
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-            height="0"
-            width="0"
-            style="display:none;visibility:hidden"
-            title="Google Tag Manager"
-          />
-        </noscript>
-      )
-    }
     <slot />
-    <Amplitude />
-    <SpeedInsights />
+    <ConsentBanner />
     <script>
       import "@/scripts/theme";
     </script>

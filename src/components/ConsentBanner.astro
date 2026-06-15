@@ -1,0 +1,62 @@
+---
+// Cookie/analytics consent banner. Hidden by default; the consent script
+// reveals it only when the visitor has not yet made a choice. GTM loads
+// unconditionally with Google Consent Mode v2 signals, while Amplitude and Speed
+// Insights are gated behind analytics_storage consent.
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+const t = useTranslations(Astro.currentLocale ?? config.site.lang);
+const { consent } = config.features;
+// VERCEL_ENV is build-time only (not client-exposed); pass it to the script via
+// a data attribute so Speed Insights stays production-gated.
+const isProd = process.env.VERCEL_ENV === "production";
+const privacyUrl = consent.privacyPolicyUrl;
+---
+
+{
+  consent.enabled && (
+    <div
+      id="consent-banner"
+      data-prod={isProd ? "true" : "false"}
+      class="fixed inset-x-0 bottom-0 z-50 hidden border-t border-border bg-background"
+      role="region"
+      aria-label="Cookie consent"
+    >
+      <div class="app-layout flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-sm text-foreground">
+          {t.consent.message}
+          {privacyUrl && (
+            <>
+              {" "}
+              <a
+                href={privacyUrl}
+                class="text-accent underline underline-offset-2"
+              >
+                {t.consent.privacyPolicy}
+              </a>
+            </>
+          )}
+        </p>
+        <div class="flex shrink-0 gap-2">
+          <button
+            id="consent-reject"
+            class="focus-outline rounded-sm border border-border px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+          >
+            {t.consent.reject}
+          </button>
+          <button
+            id="consent-accept"
+            class="focus-outline rounded-sm bg-accent px-4 py-1.5 text-sm text-accent-foreground"
+          >
+            {t.consent.accept}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  import "@/scripts/consent";
+</script>
