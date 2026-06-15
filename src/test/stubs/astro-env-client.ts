@@ -2,3 +2,4 @@
 // the integration test exercises the GTM / Consent Mode code path.
 export const PUBLIC_GTM_ID = "GTM-TEST";
 export const PUBLIC_AMPLITUDE_API_KEY: string | undefined = undefined;
+export const PUBLIC_GOOGLE_SITE_VERIFICATION: string | undefined = undefined;

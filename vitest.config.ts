@@ -3,14 +3,29 @@ import { fileURLToPath } from "node:url";
 
 export default defineConfig({
   resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    // Array form so the specific config alias is matched before the generic
+    // `@/*` → src mapping (mirrors the tsconfig `paths`).
+    alias: [
+      {
+        // `@/astro-paper.config` lives at the repo root, not under src/.
+        find: "@/astro-paper.config",
+        replacement: fileURLToPath(
+          new URL("./astro-paper.config.ts", import.meta.url)
+        ),
+      },
       // astro:env/client is a virtual module that only exists inside Astro's
       // build; point it at a stub so consent.ts can be imported under test.
-      "astro:env/client": fileURLToPath(
-        new URL("./src/test/stubs/astro-env-client.ts", import.meta.url)
-      ),
-    },
+      {
+        find: "astro:env/client",
+        replacement: fileURLToPath(
+          new URL("./src/test/stubs/astro-env-client.ts", import.meta.url)
+        ),
+      },
+      {
+        find: /^@\//,
+        replacement: fileURLToPath(new URL("./src/", import.meta.url)),
+      },
+    ],
   },
   test: {
     // Unit tests run in node; the DOM integration test opts into happy-dom via
