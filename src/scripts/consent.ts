@@ -3,38 +3,22 @@
 // Vercel Speed Insights load only when analytics_storage is granted. The choice
 // is persisted in localStorage as a full map of all Consent Mode v2 purposes,
 // mirroring the theme-toggle pattern in theme.ts.
+//
+// The pure state logic (purpose map, parsing, gating) lives in consent-state.ts
+// so it can be unit-tested without a DOM or astro:env.
 import { PUBLIC_GTM_ID, PUBLIC_AMPLITUDE_API_KEY } from "astro:env/client";
+import {
+  CONSENT_KEY,
+  GRANTED_STATE,
+  DENIED_STATE,
+  type ConsentState,
+  parseStoredConsent,
+  analyticsAllowed,
+  consentDefaultParams,
+} from "./consent-state";
 
-const CONSENT_KEY = "consent";
 // Public Amplitude demo key, used when PUBLIC_AMPLITUDE_API_KEY is unset.
 const AMPLITUDE_FALLBACK_KEY = "bf6f5ee6de23eeb0b2fd7facbe621e33";
-
-// The seven Google Consent Mode v2 consent signals.
-const PURPOSES = [
-  "ad_storage",
-  "ad_user_data",
-  "ad_personalization",
-  "analytics_storage",
-  "functionality_storage",
-  "personalization_storage",
-  "security_storage",
-] as const;
-
-type Purpose = (typeof PURPOSES)[number];
-type ConsentSignal = "granted" | "denied";
-type ConsentState = Record<Purpose, ConsentSignal>;
-
-// Build a full purpose map. security_storage is strictly necessary, so it is
-// always granted regardless of the visitor's choice.
-function makeState(signal: ConsentSignal): ConsentState {
-  return PURPOSES.reduce((acc, purpose) => {
-    acc[purpose] = purpose === "security_storage" ? "granted" : signal;
-    return acc;
-  }, {} as ConsentState);
-}
-
-const GRANTED_STATE = makeState("granted");
-const DENIED_STATE = makeState("denied");
 
 declare global {
   interface Window {
@@ -45,21 +29,7 @@ declare global {
 }
 
 function getConsent(): ConsentState | null {
-  const raw = localStorage.getItem(CONSENT_KEY);
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      PURPOSES.every(purpose => purpose in parsed)
-    ) {
-      return parsed as ConsentState;
-    }
-  } catch {
-    // Malformed or legacy ("granted"/"denied") value — treat as no choice.
-  }
-  return null;
+  return parseStoredConsent(localStorage.getItem(CONSENT_KEY));
 }
 
 function setConsent(state: ConsentState): void {
@@ -81,7 +51,7 @@ function loadGtm(stored: ConsentState | null): void {
 
   // Consent Mode v2: default every purpose to denied before GTM initializes,
   // then immediately apply a returning visitor's saved choice.
-  gtag("consent", "default", { ...DENIED_STATE, wait_for_update: 500 });
+  gtag("consent", "default", consentDefaultParams());
   if (stored) gtag("consent", "update", stored);
 
   window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
@@ -106,7 +76,7 @@ async function loadSpeedInsights(isProd: boolean): Promise<void> {
 // Load the analytics_storage-gated tools once. Guarded so View Transitions
 // navigation never double-initializes them.
 function loadConsentedAnalytics(state: ConsentState, isProd: boolean): void {
-  if (state.analytics_storage !== "granted") return;
+  if (!analyticsAllowed(state)) return;
   if (window.__consentLoaded) return;
   window.__consentLoaded = true;
   void loadAmplitude();
