@@ -1,6 +1,6 @@
-// Opt-in consent manager. Analytics (Google Tag Manager, Amplitude, Vercel
-// Speed Insights) load only after the visitor explicitly accepts. The choice is
-// persisted in localStorage, mirroring the theme-toggle pattern in theme.ts.
+// Consent manager. GTM loads unconditionally; Amplitude and Vercel Speed
+// Insights load only after the visitor explicitly accepts (opt-in). The choice
+// is persisted in localStorage, mirroring the theme-toggle pattern in theme.ts.
 import { PUBLIC_GTM_ID, PUBLIC_AMPLITUDE_API_KEY } from "astro:env/client";
 
 const CONSENT_KEY = "consent";
@@ -13,6 +13,7 @@ type ConsentValue = typeof GRANTED | typeof DENIED;
 
 declare global {
   interface Window {
+    __gtmLoaded?: boolean;
     __consentLoaded?: boolean;
     dataLayer?: unknown[];
   }
@@ -27,7 +28,8 @@ function setConsent(value: ConsentValue): void {
 }
 
 function loadGtm(): void {
-  if (!PUBLIC_GTM_ID) return;
+  if (!PUBLIC_GTM_ID || window.__gtmLoaded) return;
+  window.__gtmLoaded = true;
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
   const script = document.createElement("script");
@@ -48,12 +50,11 @@ async function loadSpeedInsights(isProd: boolean): Promise<void> {
   injectSpeedInsights();
 }
 
-// Load every analytics tool once. Guarded so View Transitions navigation never
-// double-initializes them.
-function loadAnalytics(isProd: boolean): void {
+// Load consent-gated analytics once. Guarded so View Transitions navigation
+// never double-initializes them.
+function loadConsentedAnalytics(isProd: boolean): void {
   if (window.__consentLoaded) return;
   window.__consentLoaded = true;
-  loadGtm();
   void loadAmplitude();
   void loadSpeedInsights(isProd);
 }
@@ -63,10 +64,14 @@ function setup(): void {
   if (!banner) return;
 
   const isProd = banner.dataset.prod === "true";
+
+  // GTM always loads regardless of consent choice.
+  loadGtm();
+
   const consent = getConsent();
 
   if (consent === GRANTED) {
-    loadAnalytics(isProd);
+    loadConsentedAnalytics(isProd);
     return;
   }
   if (consent === DENIED) return;
@@ -77,7 +82,7 @@ function setup(): void {
   banner.querySelector("#consent-accept")?.addEventListener("click", () => {
     setConsent(GRANTED);
     banner.classList.add("hidden");
-    loadAnalytics(isProd);
+    loadConsentedAnalytics(isProd);
   });
   banner.querySelector("#consent-reject")?.addEventListener("click", () => {
     setConsent(DENIED);
