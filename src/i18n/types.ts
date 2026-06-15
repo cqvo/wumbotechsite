@@ -66,4 +66,10 @@ export interface UIStrings {
     message: string;
     goHome: string;
   };
+  consent: {
+    message: string;
+    accept: string;
+    reject: string;
+    privacyPolicy: string;
+  };
 }

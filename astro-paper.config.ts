@@ -27,6 +27,7 @@ export default defineAstroPaperConfig({
       url: "https://github.com/cqvo/wumbotechsite/edit/main/",
     },
     search: "pagefind",
+    consent: { enabled: true },
   },
   socials: [{ name: "github", url: "https://github.com/cqvo/wumbotechsite" }],
   shareLinks: [

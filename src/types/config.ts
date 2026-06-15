@@ -59,6 +59,16 @@ interface FeaturesConfig {
    * Set to false to disable search entirely.
    */
   search?: "pagefind" | false;
+  /**
+   * Opt-in cookie/analytics consent banner. When enabled, analytics
+   * (GTM, Amplitude, Speed Insights) load only after the visitor accepts.
+   * Defaults to enabled.
+   */
+  consent?: {
+    enabled: boolean;
+    /** Optional privacy policy URL shown as a link in the banner. */
+    privacyPolicyUrl?: string;
+  };
 }
 
 interface SocialLink {

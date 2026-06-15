@@ -68,4 +68,11 @@ export default {
     message: "Page Not Found",
     goHome: "Go back home",
   },
+  consent: {
+    message:
+      "We use cookies and analytics to understand site traffic. Analytics load only if you accept.",
+    accept: "Accept",
+    reject: "Reject",
+    privacyPolicy: "Privacy policy",
+  },
 } satisfies UIStrings;
